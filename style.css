@@ -1,0 +1,87 @@
+/* Estilos base para el cuerpo y la fuente */
+body {
+    font-family: 'Inter', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f3f4f6; /* Fondo gris claro */
+}
+/* Estilos para la barra lateral de navegación */
+.sidebar {
+    width: 250px; /* Ancho fijo de la barra lateral */
+    min-width: 250px;
+    transform: translateX(0); /* Visible por defecto */
+    transition: transform 0.3s ease-in-out; /* Transición suave para ocultar/mostrar */
+    z-index: 1000; /* Asegura que esté por encima de otros elementos */
+}
+/* Clase para ocultar la barra lateral */
+.sidebar.hidden {
+    transform: translateX(-100%); /* Desliza fuera de la vista */
+}
+/* Estilos para el contenido principal */
+.main-content {
+    margin-left: 250px; /* Margen para dejar espacio a la barra lateral */
+    transition: margin-left 0.3s ease-in-out; /* Transición suave del margen */
+}
+/* Clase para el contenido principal a ancho completo cuando la barra lateral está oculta */
+.main-content.full-width {
+    margin-left: 0;
+}
+/* Media query para hacer la barra lateral responsiva en pantallas pequeñas */
+@media (max-width: 1024px) {
+    .sidebar {
+        position: fixed; /* Fija la barra lateral */
+        height: 100%; /* Ocupa toda la altura */
+        top: 0;
+        left: 0;
+    }
+    .sidebar.hidden {
+        transform: translateX(-100%);
+    }
+    .main-content {
+        margin-left: 0; /* Sin margen en pantallas pequeñas */
+    }
+}
+/* Oculta las secciones de contenido por defecto */
+.content-section {
+    display: none;
+}
+/* Muestra la sección de contenido activa */
+.content-section.active {
+    display: block;
+}
+/* Estilo para enlaces de navegación activos */
+.nav-link.active-nav {
+    background-color: #4a5568; /* Color de fondo oscuro para el enlace activo */
+    color: #ffffff; /* Texto blanco */
+    font-weight: 600; /* Texto en negrita */
+}
+/* Estilo para las filas de gastos en la tabla */
+.row-gasto {
+    background-color: #fee2e2; /* Fondo rojo claro para gastos */
+}
+/* Estilo para las filas de ingresos en la tabla */
+.row-ingreso {
+    background-color: #d1fae5; /* Fondo verde claro para ingresos */
+}
+/* Estilo para las filas de pagos en la tabla */
+.row-pago {
+    background-color: #dbeafe; /* Fondo azul claro para pagos */
+}
+/* Estilo para mensaje de alerta */
+.alert-message {
+    padding: 0.75rem 1.25rem;
+    margin-bottom: 1rem;
+    border: 1px solid transparent;
+    border-radius: 0.25rem;
+    display: none; /* Oculto por defecto */
+}
+.alert-success {
+    color: #0f5132;
+    background-color: #d1e7dd;
+    border-color: #badbcc;
+}
+.alert-error {
+    color: #842029;
+    background-color: #f8d7da;
+    border-color: #f5c2c7;
+}

@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Control de Finanzas Personales</title>
+    <!-- Incluye Tailwind CSS para un estilo moderno y responsivo -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Incluye la fuente Inter de Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Enlaza el archivo de estilos CSS externo -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="flex min-h-screen bg-gray-100">
+
+    <!-- Barra lateral de navegación -->
+    <aside id="sidebar" class="sidebar bg-gray-800 text-white p-6 space-y-4 flex-shrink-0 lg:relative lg:translate-x-0 rounded-r-lg shadow-lg">
+        <h2 class="text-2xl font-bold mb-6 text-indigo-300">FinanzasApp</h2>
+        <nav class="space-y-2">
+            <a href="#dashboard" class="nav-link block py-2 px-4 rounded-lg hover:bg-gray-700 transition duration-200 active-nav" data-section="dashboard">📊 Dashboard</a>
+            <a href="#tipos-movimiento" class="nav-link block py-2 px-4 rounded-lg hover:bg-gray-700 transition duration-200" data-section="tipos-movimiento">🔄 Tipos de Movimiento</a>
+            <a href="#tipos-costo" class="nav-link block py-2 px-4 rounded-lg hover:bg-gray-700 transition duration-200" data-section="tipos-costo">🏷️ Tipos de Costo</a>
+            <a href="#categorias" class="nav-link block py-2 px-4 rounded-lg hover:bg-gray-700 transition duration-200" data-section="categorias">📂 Categorías</a>
+            <a href="#subcategorias" class="nav-link block py-2 px-4 rounded-lg hover:bg-gray-700 transition duration-200" data-section="subcategorias">📁 SubCategorías</a>
+            <a href="#conceptos" class="nav-link block py-2 px-4 rounded-lg hover:bg-gray-700 transition duration-200" data-section="conceptos">💡 Conceptos</a>
+            <a href="#ingresos" class="nav-link block py-2 px-4 rounded-lg hover:bg-gray-700 transition duration-200" data-section="ingresos">💸 Ingresos</a>
+            <a href="#gastos" class="nav-link block py-2 px-4 rounded-lg hover:bg-gray-700 transition duration-200" data-section="gastos">📉 Gastos</a>
+            <a href="#pagos" class="nav-link block py-2 px-4 rounded-lg hover:bg-gray-700 transition duration-200" data-section="pagos">💳 Pagos</a>
+            <a href="#transacciones" class="nav-link block py-2 px-4 rounded-lg hover:bg-gray-700 transition duration-200" data-section="transacciones">📝 Transacciones</a>
+        </nav>
+    </aside>
+
+    <!-- Contenido principal -->
+    <div id="main-content" class="main-content flex-1 p-6 transition-all duration-300">
+        <!-- Botón para ocultar/mostrar sidebar en móviles -->
+        <button id="toggle-sidebar" class="lg:hidden fixed top-4 left-4 bg-gray-800 text-white p-2 rounded-full shadow-lg z-1001">
+            ☰
+        </button>
+
+        <!-- Mensaje de alerta global -->
+        <div id="global-alert" class="alert-message rounded-lg shadow-md" role="alert"></div>
+
+        <!-- Sección de Dashboard -->
+        <section id="dashboard" class="content-section active bg-white p-6 rounded-lg shadow-md mb-8">
+            <h1 class="text-3xl font-bold mb-6 text-gray-800">Dashboard Mensual</h1>
+
+            <!-- Selector de mes/año para el dashboard -->
+            <div class="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-4 mb-6">
+                <label for="dashboard-month" class="block text-sm font-medium text-gray-700">Mes:</label>
+                <select id="dashboard-month" class="mt-1 block w-full sm:w-auto rounded-md border-gray-300 shadow-sm p-2 focus:ring-indigo-500 focus:border-indigo-500"></select>
+                <label for="dashboard-year" class="block text-sm font-medium text-gray-700">Año:</label>
+                <select id="dashboard-year" class="mt-1 block w-full sm:w-auto rounded-md border-gray-300 shadow-sm p-2 focus:ring-indigo-500 focus:border-indigo-500"></select>
+            </div>
+
+            <!-- Resumen del mes actual -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 mb-8">
+                <div class="bg-green-100 p-6 rounded-lg shadow-md border-l-4 border-green-500">
+                    <h3 class="text-lg font-semibold text-green-700">Ingresos Totales</h3>
+                    <p id="total-ingresos" class="text-3xl font-bold text-green-900 mt-2">$0.00</p>
+                </div>
+                <div class="bg-red-100 p-6 rounded-lg shadow-md border-l-4 border-red-500">
+                    <h3 class="text-lg font-semibold text-red-700">Gastos Totales</h3>
+                    <p id="total-gastos" class="text-3xl font-bold text-red-900 mt-2">$0.00</p>
+                </div>
+                <div class="bg-blue-100 p-6 rounded-lg shadow-md border-l-4 border-blue-500">
+                    <h3 class="text-lg font-semibold text-blue-700">Saldo Disponible</h3>
+                    <p id="saldo-disponible" class="text-3xl font-bold text-blue-900 mt-2">$0.00</p>
+                </div>
+                <div class="bg-yellow-100 p-6 rounded-lg shadow-md border-l-4 border-yellow-500">
+                    <h3 class="text-lg font-semibold text-yellow-700">Pagos Realizados</h3>
+                    <p id="pagos-realizados" class="text-3xl font-bold text-yellow-900 mt-2">$0.00</p>
+                </div>
+                <div class="bg-purple-100 p-6 rounded-lg shadow-md border-l-4 border-purple-500">
+                    <h3 class="text-lg font-semibold text-purple-700">Pagos Pendientes</h3>
+                    <p id="pagos-pendientes" class="text-3xl font-bold text-purple-900 mt-2">$0.00</p>
+                </div>
+            </div>
+
+            <!-- Próximos Vencimientos -->
+            <div class="bg-white p-6 rounded-lg shadow-md mb-8 border-t-4 border-gray-300">
+                <h2 class="text-2xl font-bold mb-4 text-gray-800">Próximos Vencimientos</h2>
+                <ul id="proximos-vencimientos" class="list-disc list-inside text-gray-700 space-y-2">
+                    <li class="text-gray-500">No hay vencimientos próximos.</li>
+                </ul>
+            </div>
+
+            <!-- Distribución de Gastos por Categorías (Placeholder para Gráfico) -->
+            <div class="bg-white p-6 rounded-lg shadow-md border-t-4 border-gray-300">
+                <h2 class="text-2xl font-bold mb-4 text-gray-800">Distribución de Gastos por Categorías</h2>
+                <div id="gastos-por-categoria" class="h-64 bg-gray-50 flex items-center justify-center rounded-md text-gray-400">
+                    <!-- Aquí se renderizará el gráfico de distribución de gastos -->
+                    Gráfico de torta o barras (Pendiente de implementación con librería de gráficos)
+                </div>
+            </div>
+        </section>
+
+        <!-- Formularios de Catálogos -->
+        <section id="tipos-movimiento" class="content-section bg-white p-6 rounded-lg shadow-md mb-8">
+            <h2 class="text-2xl font-bold mb-4 text-gray-800">Administrar Tipos de Movimiento</h2>
+            <form id="form-tipo-movimiento" class="space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label for="id-tipo-movimiento" class="block text-sm font-medium text-gray-700">ID Tipo Movimiento (Auto-generado)</label>
+                        <input type="text" id="id-tipo-movimiento" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 bg-gray-100 cursor-not-allowed" readonly>
+                    </div>
+                    <div>
+                        <label for="tipo-movimiento" class="block text-sm font-medium text-gray-700">Tipo de Movimiento</label>
+                        <input type="text" id="tipo-movimiento" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 focus:ring-indigo-500 focus:border-indigo-500" required>
+                    </div>
+                </div>
+                <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Guardar Tipo de Movimiento</button>
+            </form>
+            <div class="mt-6">
+                <h3 class="text-xl font-semibold mb-3 text-gray-800">Tipos de Movimiento Existente</h3>
+                <ul id="lista-tipos-movimiento" class="list-disc list-inside space-y-2 text-gray-700">
+                    <!-- Los tipos de movimiento se cargarán aquí -->
+                </ul>
+            </div>
+        </section>
+
+        <section id="tipos-costo" class="content-section bg-white p-6 rounded-lg shadow-md mb-8">
+            <h2 class="text-2xl font-bold mb-4 text-gray-800">Administrar Tipos de Costo</h2>
+            <form id="form-tipo-costo" class="space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label for="id-tipo-costo" class="block text-sm font-medium text-gray-700">ID Tipo Costo (Auto-generado)</label>
+                        <input type="text" id="id-tipo-costo" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 bg-gray-100 cursor-not-allowed" readonly>
+                    </div>
+                    <div>
+                        <label for="tipo-costo" class="block text-sm font-medium text-gray-700">Tipo de Costo</label>
+                        <input type="text" id="tipo-costo" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 focus:ring-indigo-500 focus:border-indigo-500" required>
+                    </div>
+                    <div>
+                        <label for="tipo-movimiento-fk-costo" class="block text-sm font-medium text-gray-700">Tipo de Movimiento</label>
+                        <select id="tipo-movimiento-fk-costo" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 focus:ring-indigo-500 focus:border-indigo-500" required>
+                            <option value="">Seleccione un Tipo de Movimiento</option>
+                        </select>
+                    </div>
+                </div>
+                <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Guardar Tipo de Costo</button>
+            </form>
+            <div class="mt-6">
+                <h3 class="text-xl font-semibold mb-3 text-gray-800">Tipos de Costo Existente</h3>
+                <ul id="lista-tipos-costo" class="list-disc list-inside space-y-2 text-gray-700">
+                    <!-- Los tipos de costo se cargarán aquí -->
+                </ul>
+            </div>
+        </section>
+
+        <section id="categorias" class="content-section bg-white p-6 rounded-lg shadow-md mb-8">
+            <h2 class="text-2xl font-bold mb-4 text-gray-800">Administrar Categorías</h2>
+            <form id="form-categoria" class="space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label for="id-categoria" class="block text-sm font-medium text-gray-700">ID Categoría (Auto-generado)</label>
+                        <input type="text" id="id-categoria" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 bg-gray-100 cursor-not-allowed" readonly>
+                    </div>
+                    <div>
+                        <label for="categoria" class="block text-sm font-medium text-gray-700">Categoría</label>
+                        <input type="text" id="categoria" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 focus:ring-indigo-500 focus:border-indigo-500" required>
+                    </div>
+                    <div>
+                        <label for="tipo-movimiento-fk-categoria" class="block text-sm font-medium text-gray-700">Tipo de Movimiento</label>
+                        <select id="tipo-movimiento-fk-categoria" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 focus:ring-indigo-500 focus:border-indigo-500" required>
+                            <option value="">Seleccione un Tipo de Movimiento</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="tipo-costo-fk-categoria" class="block text-sm font-medium text-gray-700">Tipo de Costo</label>
+                        <select id="tipo-costo-fk-categoria" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 focus:ring-indigo-500 focus:border-indigo-500" required>
+                            <option value="">Seleccione un Tipo de Costo</option>
+                        </select>
+                    </div>
+                </div>
+                <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Guardar Categoría</button>
+            </form>
+            <div class="mt-6">
+                <h3 class="text-xl font-semibold mb-3 text-gray-800">Categorías Existentes</h3>
+                <ul id="lista-categorias" class="list-disc list-inside space-y-2 text-gray-700">
+                    <!-- Las categorías se cargarán aquí -->
+                </ul>
+            </div>
+        </section>
+
+        <section id="subcategorias" class="content-section bg-white p-6 rounded-lg shadow-md mb-8">
+            <h2 class="text-2xl font-bold mb-4 text-gray-800">Administrar SubCategorías</h2>
+            <form id="form-subcategoria" class="space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label for="id-subcategoria" class="block text-sm font-medium text-gray-700">ID SubCategoría (Auto-generado)</label>
+                        <input type="text" id="id-subcategoria" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 bg-gray-100 cursor-not-allowed" readonly>
+                    </div>
+                    <div>
+                        <label for="subcategoria" class="block text-sm font-medium text-gray-700">SubCategoría</label>
+                        <input type="text" id="subcategoria" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 focus:ring-indigo-500 focus:border-indigo-500" required>
+                    </div>
+                    <div>
+                        <label for="tipo-movimiento-fk-subcategoria" class="block text-sm font-medium text-gray-700">Tipo de Movimiento</label>
+                        <select id="tipo-movimiento-fk-subcategoria" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 focus:ring-indigo-500 focus:border-indigo-500" required>
+                            <option value="">Seleccione un Tipo de Movimiento</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="tipo-costo-fk-subcategoria" class="block text-sm font-medium text-gray-700">Tipo de Costo</label>
+                        <select id="tipo-costo-fk-subcategoria" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 focus:ring-indigo-500 focus:border-indigo-500" required>
+                            <option value="">Seleccione un Tipo de Costo</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="categoria-fk-subcategoria" class="block text-sm font-medium text-gray-700">Categoría</label>
+                        <select id="categoria-fk-subcategoria" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 focus:ring-indigo-500 focus:border-indigo-500" required>
+                            <option value="">Seleccione una Categoría</option>
+                        </select>
+                    </div>
+                </div>
+                <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Guardar SubCategoría</button>
+            </form>
+            <div class="mt-6">
+                <h3 class="text-xl font-semibold mb-3 text-gray-800">SubCategorías Existentes</h3>
+                <ul id="lista-subcategorias" class="list-disc list-inside space-y-2 text-gray-700">
+                    <!-- Las subcategorías se cargarán aquí -->
+                </ul>
+            </div>
+        </section>
+
+        <section id="conceptos" class="content-section bg-white p-6 rounded-lg shadow-md mb-8">
+            <h2 class="text-2xl font-bold mb-4 text-gray-800">Administrar Conceptos</h2>
+            <form id="form-concepto" class="space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label for="id-concepto" class="block text-sm font-medium text-gray-700">ID Concepto (Auto-generado)</label>
+                        <input type="text" id="id-concepto" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 bg-gray-100 cursor-not-allowed" readonly>
+                    </div>
+                    <div>
+                        <label for="concepto" class="block text-sm font-medium text-gray-700">Concepto</label>
+                        <input type="text" id="concepto" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 focus:ring-indigo-500 focus:border-indigo-500" required>
+                    </div>
+                    <div>
+                        <label for="tipo-movimiento-fk-concepto" class="block text-sm font-medium text-gray-700">Tipo de Movimiento</label>
+                        <select id="tipo-movimiento-fk-concepto" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 focus:ring-indigo-500 focus:border-indigo-500" required>
+                            <option value="">Seleccione un Tipo de Movimiento</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="tipo-costo-fk-concepto" class="block text-sm font-medium text-gray-700">Tipo de Costo</label>
+                        <select id="tipo-costo-fk-concepto" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 focus:ring-indigo-500 focus:border-indigo-500" required>
+                            <option value="">Seleccione un Tipo de Costo</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="categoria-fk-concepto" class="block text-sm font-medium text-gray-700">Categoría</label>
+                        <select id="categoria-fk-concepto" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 focus:ring-indigo-500 focus:border-indigo-500" required>
+                            <option value="">Seleccione una Categoría</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="subcategoria-fk-concepto" class="block text-sm font-medium text-gray-700">SubCategoría</label>
+                        <select id="subcategoria-fk-concepto" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 focus:ring-indigo-500 focus:border-indigo-500">
+                            <option value="">Seleccione una SubCategoría (Opcional)</option>
+                        </select>
+                    </div>
+                </div>
+                <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Guardar Concepto</button>
+            </form>
+            <div class="mt-6">
+                <h3 class="text-xl font-semibold mb-3 text-gray-800">Conceptos Existentes</h3>
+                <ul id="lista-conceptos" class="list-disc list-inside space-y-2 text-gray-700">
+                    <!-- Los conceptos se cargarán aquí -->
+                </ul>
+            </div>
+        </section>
+
+        <!-- Formularios de Transacciones -->
+        <section id="ingresos" class="content-section bg-white p-6 rounded-lg shadow-md mb-8">
+            <h2 class="text-2xl font-bold mb-4 text-gray-800">Registrar Ingreso</h2>
+            <form id="form-ingreso" class="space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div>
+                        <label for="ingreso-concepto" class="block text-sm font-medium text-gray-700">Concepto</label>
+                        <select id="ingreso-concepto" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 focus:ring-indigo-500 focus:border-indigo-500" required>
+                            <option value="">Seleccione un Concepto</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="ingreso-periodo-mes" class="block text-sm font-medium text-gray-700">Mes del Periodo</label>
+                        <select id="ingreso-periodo-mes" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 focus:ring-indigo-500 focus:border-indigo-500" required>
+                            <!-- Opciones de meses se generarán aquí -->
+                        </select>
+                    </div>
+                    <div>
+                        <label for="ingreso-periodo-anio" class="block text-sm font-medium text-gray-700">Año del Periodo</label>
+                        <select id="ingreso-periodo-anio" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 focus:ring-indigo-500 focus:border-indigo-500" required>
+                            <!-- Opciones de años se generarán aquí -->
+                        </select>
+                    </div>
+                    <div>
+                        <label for="ingreso-quincena" class="block text-sm font-medium text-gray-700">Quincena</label>
+                        <select id="ingreso-quincena" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 focus:ring-indigo-500 focus:border-indigo-500" required>
+                            <option value="">Seleccione Quincena</option>
+                            <option value="Primera">Primera</option>
+                            <option value="Segunda">Segunda</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="ingreso-monto" class="block text-sm font-medium text-gray-700">Monto Ingreso</label>
+                        <input type="number" id="ingreso-monto" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 focus:ring-indigo-500 focus:border-indigo-500" step="0.01" required>
+                    </div>
+                    <div>
+                        <label for="ingreso-fecha" class="block text-sm font-medium text-gray-700">Fecha de Ingreso</label>
+                        <input type="date" id="ingreso-fecha" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 focus:ring-indigo-500 focus:border-indigo-500" required>
+                    </div>
+                </div>
+                <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Registrar Ingreso</button>
+            </form>
+        </section>
+
+        <section id="gastos" class="content-section bg-white p-6 rounded-lg shadow-md mb-8">
+            <h2 class="text-2xl font-bold mb-4 text-gray-800">Registrar Gasto</h2>
+            <form id="form-gasto" class="space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div>
+                        <label for="gasto-concepto" class="block text-sm font-medium text-gray-700">Concepto</label>
+                        <select id="gasto-concepto" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 focus:ring-indigo-500 focus:border-indigo-500" required>
+                            <option value="">Seleccione un Concepto</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="gasto-periodo-mes" class="block text-sm font-medium text-gray-700">Mes del Periodo</label>
+                        <select id="gasto-periodo-mes" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 focus:ring-indigo-500 focus:border-indigo-500" required>
+                            <!-- Opciones de meses se generarán aquí -->
+                        </select>
+                    </div>
+                    <div>
+                        <label for="gasto-periodo-anio" class="block text-sm font-medium text-gray-700">Año del Periodo</label>
+                        <select id="gasto-periodo-anio" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 focus:ring-indigo-500 focus:border-indigo-500" required>
+                            <!-- Opciones de años se generarán aquí -->
+                        </select>
+                    </div>
+                    <div>
+                        <label for="gasto-monto" class="block text-sm font-medium text-gray-700">Monto del Gasto</label>
+                        <input type="number" id="gasto-monto" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 focus:ring-indigo-500 focus:border-indigo-500" step="0.01" required>
+                    </div>
+                    <div>
+                        <label for="gasto-dia-corte" class="block text-sm font-medium text-gray-700">Día de Corte</label>
+                        <input type="number" id="gasto-dia-corte" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 focus:ring-indigo-500 focus:border-indigo-500" min="1" max="31" required>
+                    </div>
+                    <div>
+                        <label for="gasto-dia-limite" class="block text-sm font-medium text-gray-700">Día Límite de Pago</label>
+                        <input type="number" id="gasto-dia-limite" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 focus:ring-indigo-500 focus:border-indigo-500" min="1" max="31" required>
+                    </div>
+                    <div>
+                        <label for="gasto-fecha-corte" class="block text-sm font-medium text-gray-700">Fecha de Corte</label>
+                        <input type="date" id="gasto-fecha-corte" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 bg-gray-100 cursor-not-allowed" readonly>
+                    </div>
+                    <div>
+                        <label for="gasto-fecha-limite" class="block text-sm font-medium text-gray-700">Fecha Límite de Pago</label>
+                        <input type="date" id="gasto-fecha-limite" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 bg-gray-100 cursor-not-allowed" readonly>
+                    </div>
+                    <div class="md:col-span-2">
+                        <label for="gasto-notas" class="block text-sm font-medium text-gray-700">Notas</label>
+                        <textarea id="gasto-notas" rows="2" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 focus:ring-indigo-500 focus:border-indigo-500"></textarea>
+                    </div>
+                </div>
+                <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Registrar Gasto</button>
+            </form>
+        </section>
+
+        <section id="pagos" class="content-section bg-white p-6 rounded-lg shadow-md mb-8">
+            <h2 class="text-2xl font-bold mb-4 text-gray-800">Registrar Pago</h2>
+            <form id="form-pago" class="space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label for="pago-gasto-pendiente" class="block text-sm font-medium text-gray-700">Gasto Pendiente</label>
+                        <select id="pago-gasto-pendiente" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 focus:ring-indigo-500 focus:border-indigo-500" required>
+                            <option value="">Seleccione un Gasto Pendiente</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="pago-monto" class="block text-sm font-medium text-gray-700">Monto del Pago</label>
+                        <input type="number" id="pago-monto" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 focus:ring-indigo-500 focus:border-indigo-500" step="0.01" required>
+                    </div>
+                    <div>
+                        <label for="pago-fecha" class="block text-sm font-medium text-gray-700">Fecha de Pago</label>
+                        <input type="date" id="pago-fecha" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 focus:ring-indigo-500 focus:border-indigo-500" required>
+                    </div>
+                    <div class="md:col-span-2">
+                        <label for="pago-notas" class="block text-sm font-medium text-gray-700">Notas</label>
+                        <textarea id="pago-notas" rows="3" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 focus:ring-indigo-500 focus:border-indigo-500"></textarea>
+                    </div>
+                </div>
+                <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Registrar Pago</button>
+            </form>
+        </section>
+
+        <!-- Sección de Tabla de Transacciones -->
+        <section id="transacciones" class="content-section bg-white p-6 rounded-lg shadow-md mb-8">
+            <h2 class="text-2xl font-bold mb-4 text-gray-800">Historial de Transacciones</h2>
+
+            <!-- Filtros -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-6">
+                <div>
+                    <label for="filter-fecha-inicio" class="block text-sm font-medium text-gray-700">Fecha Inicio</label>
+                    <input type="date" id="filter-fecha-inicio" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 focus:ring-indigo-500 focus:border-indigo-500">
+                </div>
+                <div>
+                    <label for="filter-fecha-fin" class="block text-sm font-medium text-gray-700">Fecha Fin</label>
+                    <input type="date" id="filter-fecha-fin" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 focus:ring-indigo-500 focus:border-indigo-500">
+                </div>
+                <div>
+                    <label for="filter-tipo-movimiento" class="block text-sm font-medium text-gray-700">Tipo de Movimiento</label>
+                    <select id="filter-tipo-movimiento" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 focus:ring-indigo-500 focus:border-indigo-500">
+                        <option value="">Todos</option>
+                        <!-- Opciones de tipos de movimiento se cargarán aquí -->
+                    </select>
+                </div>
+                <div>
+                    <label for="filter-categoria" class="block text-sm font-medium text-gray-700">Categoría</label>
+                    <select id="filter-categoria" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 focus:ring-indigo-500 focus:border-indigo-500">
+                        <option value="">Todas</option>
+                        <!-- Opciones de categorías se cargarán aquí -->
+                    </select>
+                </div>
+                <div class="col-span-full sm:col-span-1 flex items-end">
+                    <button id="apply-filters" class="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Aplicar Filtros</button>
+                </div>
+            </div>
+
+            <!-- Tabla -->
+            <div class="overflow-x-auto rounded-lg shadow-md">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fecha Transacción</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tipo Movimiento</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Concepto</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Monto</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fecha Pago/Recibo</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Periodo</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Estatus Gasto</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Prioridad Gasto</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Notas</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabla-transacciones-body" class="bg-white divide-y divide-gray-200">
+                        <!-- Las filas de transacciones se cargarán aquí -->
+                        <tr>
+                            <td colspan="11" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">No hay transacciones registradas.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Ventana Modal para Edición/Eliminación -->
+        <div id="transaction-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-2000 flex items-center justify-center">
+            <div class="relative mx-auto p-5 border w-11/12 md:w-1/2 lg:w-1/3 xl:w-1/4 shadow-lg rounded-md bg-white">
+                <h3 class="text-2xl font-bold mb-4 text-gray-800" id="modal-title"></h3>
+                <div id="modal-body" class="mb-4">
+                    <!-- Contenido del formulario de edición o confirmación de eliminación -->
+                </div>
+                <div class="mt-4 flex justify-end space-x-2">
+                    <button id="cancel-modal" class="px-4 py-2 bg-gray-300 text-gray-800 rounded-md hover:bg-gray-400">Cancelar</button>
+                    <button id="confirm-modal" class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700">Confirmar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Enlaza el archivo de lógica JavaScript externo -->
+    <script src="main.js"></script>
+</body>
+</html>
